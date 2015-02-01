@@ -4,6 +4,7 @@ from HTMLParser import HTMLParser
 import simplejson as json
 import webbrowser
 import subprocess
+import datetime
 import urllib2
 import string
 import os
@@ -15,7 +16,12 @@ songjson = json.loads(urllib2.urlopen("http://itunes.apple.com/search?term=" + n
 songlist = songjson['results']
 songlist = songlist[0]
 prevurl = songlist['previewUrl']
+year = songlist['releaseDate']
 if prevurl.startswith("http://") == True:
+    year = year[:4]
+    if(int(year) < datetime.datetime.now().year - 15):
+        print "CLASSIC: Released in " + year
+        score = score - 10;
     mp3file = urllib2.urlopen(prevurl)
     output = open('preview.m4a','wb')
     output.write(mp3file.read())
@@ -109,7 +115,7 @@ for word2 in html.replace("\n", " ").split(" "):
         last_word = word
     elif(word == last_word):
         score = score + 1
-        print "WORD REPEATED: "
+        print "WORD REPEATED: " + word
     last_word = word
 score = score / (len(html) - 1)
 score = score * 750
