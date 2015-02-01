@@ -20,56 +20,52 @@ html = html.replace("<br>", "\n")
 html = html.replace("<br />", "\n")
 #print html
 score = 0.00
-x = 0
-for x in range(0, len(html) - 1):
-    if html[x:x+1] == ' ':
-        space = x
-    if html[x:x+1] == 'I':
-        score = score + 1
-    if html[x:x+4] == 'baby':
-        score = score + 1
-    if html[x:x+4] == 'butt':
-        score = score + 1
-    if html[x:x+2] == 'we':
-        score = score + 1
-    if html[x:x+2] == 'no':
-        score = score + 1
-    if html[x:x+2] == 'go':
-        score = score + 1
-    if html[x:x+2] == 'oh':
-        score = score + 1
-    if html[x:x+2] == 'my':
-        score = score + 1
-    if html[x:x+3] == 'she':
-        score = score + 1
-    if html[x:x+3] == 'him':
-        score = score + 1
-    if html[x:x+3] == 'her':
-        score = score + 1
-    if html[x:x+4] == 'back':
-        score = score + 1
-    if html[x:x+4] == 'gone':
-        score = score + 1
-    if html[x:x+4] == 'yeah':
-        score = score + 1
-    if html[x:x+4] == 'mine':
-        score = score + 1
-    if html[x:x+3] == 'fat':
-        score = score + 1
-    if html[x:x+4] == 'love':
-        score = score + 1
-    if html[x:x+2] == 'us':
-        score = score + 1
-    if html[x:x+5] == 'curves':
-        score = score + 1
-        
 last_word = ""
+h = HTMLParser()
 for word2 in html.replace("\n", " ").split(" "):
-    word = word2.lower()
+    word = h.unescape(word2.lower())
     if(word != word.strip()):
         continue
     if(word == ""):
         continue
+    if word == 'I':
+        score = score + 1
+    if word == 'baby':
+        score = score + 1
+    if word == 'butt':
+        score = score + 1
+    if word == 'we':
+        score = score + 1
+    if word == 'no':
+        score = score + 1
+    if word == 'go':
+        score = score + 1
+    if word == 'oh':
+        score = score + 1
+    if word == 'my':
+        score = score + 1
+    if word == 'she':
+        score = score + 1
+    if word == 'him':
+        score = score + 1
+    if word == 'her':
+        score = score + 1
+    if word == 'back':
+        score = score + 1
+    if word == 'gone':
+        score = score + 1
+    if word == 'yeah':
+        score = score + 1
+    if word == 'mine':
+        score = score + 1
+    if word == 'fat':
+        score = score + 1
+    if word == 'love':
+        score = score + 1
+    if word == 'us':
+        score = score + 1
+    if word == 'curves':
+        score = score + 1
     if(word.endswith(",") == True):
         word = word[:len(word) - 1]
     if(word.endswith(")") == True):
