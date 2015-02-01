@@ -1,8 +1,28 @@
-
+# -*- coding: cp1252 -*-
+#Copyright Milkey Mouse 2015
 from HTMLParser import HTMLParser
+import simplejson as json
+import webbrowser
+import subprocess
 import urllib2
+import string
+import os
+
 address = "http://www.songlyrics.com/index.php?section=search&searchW="
 name = raw_input("Enter a song title and it will be auto-rated: ").replace(" ", "+")
+#try:
+songjson = json.loads(urllib2.urlopen("http://itunes.apple.com/search?term=" + name + "&entity=song&limit=1").read())
+songlist = songjson['results']
+songlist = songlist[0]
+prevurl = songlist['previewUrl']
+if prevurl.startswith("http://") == True:
+    mp3file = urllib2.urlopen(prevurl)
+    output = open('preview.m4a','wb')
+    output.write(mp3file.read())
+    output.close()
+    webbrowser.open(os.path.abspath("preview.m4a"))
+#except:
+#    pass
 address = address + name
 response = urllib2.urlopen(address)
 html = response.read()
@@ -23,58 +43,50 @@ score = 0.00
 last_word = ""
 h = HTMLParser()
 for word2 in html.replace("\n", " ").split(" "):
-    word = h.unescape(word2.lower())
+    word = h.unescape(word2.lower()).replace("’", "'").translate(string.maketrans("",""), string.punctuation);
     if(word != word.strip()):
         continue
     if(word == ""):
         continue
+    lastscore = score
     if word == 'I':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'baby':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'butt':
-        score = score + 1
-    if word == 'we':
-        score = score + 1
+        print "STUPID WORD:" + word
+        score = score + 2
     if word == 'no':
-        score = score + 1
-    if word == 'go':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'oh':
-        score = score + 1
-    if word == 'my':
-        score = score + 1
-    if word == 'she':
-        score = score + 1
-    if word == 'him':
-        score = score + 1
-    if word == 'her':
-        score = score + 1
+        print "STUPID WORD:" + word
+        score = score + 0.5
     if word == 'back':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'gone':
-        score = score + 1
+        print "STUPID WORD:" + word
+        score = score + 0.5
     if word == 'yeah':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'mine':
+        print "STUPID WORD:" + word
         score = score + 1
     if word == 'fat':
-        score = score + 1
+        print "STUPID WORD:" + word
+        score = score + 2
     if word == 'love':
-        score = score + 1
-    if word == 'us':
-        score = score + 1
+        print "STUPID WORD:" + word
+        score = score + 1.5
     if word == 'curves':
-        score = score + 1
-    if(word.endswith(",") == True):
-        word = word[:len(word) - 1]
-    if(word.endswith(")") == True):
-        word = word[:len(word) - 1]
-    if(word.endswith("(") == True):
-        word = word[1:]
-    if(word.endswith(".") == True):
-        word = word[:len(word) - 1]
-    #print "http://dictionary.reference.com/browse/" + word
+        print "STUPID WORD:" + word
+        score = score + 2.5
+    if(lastscore != score):
+        continue
     isword = False
     try:
         response2 = urllib2.urlopen("http://dictionary.reference.com/browse/" + word).read()
@@ -89,12 +101,22 @@ for word2 in html.replace("\n", " ").split(" "):
         score = score + 2
     else:
         print "IS A WORD: " + word
-    if(word == last_word):
+    if(word == "nah"):
+        print "CHANT REPEATED: " + word
+        last_word = word
+    elif(word == "na"):
+        print "CHANT REPEATED: " + word
+        last_word = word
+    elif(word == last_word):
         score = score + 1
-        print "WORD REPEATED"
+        print "WORD REPEATED: "
     last_word = word
 score = score / (len(html) - 1)
 score = score * 750
-print str(score)[:str(score).find(".")] + "% crappy"
+os.system("taskkill /im wmplayer.exe /f")
+if(score == 0):
+    print "Sorry, we can't seem to be able to find that song."
+else:
+    print str(score)[:str(score).find(".")] + "% crappy"
 #except:
 #    print "python is stupid and so are you"
