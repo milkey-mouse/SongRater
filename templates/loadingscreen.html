@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="../static/sound/360player.css">
+    <link rel="stylesheet" type="text/css" href="../static/sound/360player-visualization.css">
+    <link rel="stylesheet" type="text/css" href="../static/global.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="../static/sound/soundmanager2-nodebug-jsmin.js"></script>
+    <script type="text/javascript" src="../static/sound/berniecode-animator.js"></script>
+    <script type="text/javascript" src="../static/sound/360player.js"></script>
+    <script type="text/javascript" src="../static/sound/supdate.js"></script>
+  </head>
+  <body>
+    <div class="center">
+      <h1>Analyzing</h1>
+      <p>Analyzing the lyrics of <b>{{ songname }}</b>. Not the right song? <a href="..\">Go back</a>.</p>
+      <div class="ui360 ui360-vis" id="player">
+        <a href="{{ songurl }}"></a>
+      </div>
+    </div>
+    <div id="logos">
+      <a href="http://www.apple.com/itunes/"><img src="../static/logos/itunes.png"></img></a>
+      <a href="http://www.songlyrics.com/"><img src="../static/logos/songlyrics.png"></img></a>
+      <a href="http://the.echonest.com/"><img src="../static/logos/echonest.png"></img></a>
+      <a href="http://www.python.org/"><img src="../static/logos/python.png"></img></a>
+      <a href="http://flask.pocoo.org/"><img src="../static/logos/flask.png"></img></a>
+  </body>
+  <p>{{ reqid }}</p>
+</html>

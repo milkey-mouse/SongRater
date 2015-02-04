@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="../static/sound/360player.css">
+    <link rel="stylesheet" type="text/css" href="../static/sound/360player-visualization.css">
+    <link rel="stylesheet" type="text/css" href="../static/search.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="../static/sound/soundmanager2-nodebug-jsmin.js"></script>
+    <script type="text/javascript" src="../static/sound/berniecode-animator.js"></script>
+    <script type="text/javascript" src="../static/sound/360player.js"></script>
+  </head>
+  <body>
+  <div class="center">
+    <h1 id="title">SongRater</h1>
+      <div class="searchbox">
+          <form>
+            <form action="localhost:5000/rate/">
+            <input id="searchtext" type="text" name="songname">
+            <input id="searchbutton" type="submit" value="">
+          </form>
+      </div>
+  </div>
+  </body>
+</html>
