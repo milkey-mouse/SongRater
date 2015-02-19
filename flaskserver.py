@@ -1,30 +1,43 @@
 # -*- coding: cp1252 -*-
 #Copyright Milkey Mouse 2015
-from multiprocessing import Process
-from multiprocessing import Queue
+from multiprocessing.managers import BaseManager
 from HTMLParser import HTMLParser
 from flask import render_template
+from flask.ext.gzip import Gzip
 from flask import request
 import simplejson as json
 from flask import Flask
 import multiprocessing
+import subprocess
 import datetime
 import urllib2
 import string
+import Queue
 import uuid
 import math
+import sys
 import os
 
 #went a bit OCD on the imports there
 
+#note: might add a qr code generator
+
 #FLASK HATES MULTIPROCESSING! ARGH!
 
 app = Flask(__name__)
+gzip = Gzip(app)
 
 processes = {}
 
-def rate(name, uid, rq):
+def rate(name, uid):
     try:
+        class QueueManager(BaseManager): pass
+        QueueManager.register('get_queue')
+        key = open("auth.txt", "r")
+        m = QueueManager(address=('localhost', 1234), authkey="hi")
+        key.close()
+        m.connect()
+        rq = m.get_queue()
         rq.put_nowait((uid, 0))
         address = "http://www.songlyrics.com/index.php?section=search&searchW="
         address = address + name
@@ -157,8 +170,6 @@ def dictlist():
     processqueue()
     return str(processes)
 
-rqe = Queue()
-
 @app.route('/')
 def hello_world():
     songname = request.args.get('songname', '')
@@ -183,9 +194,11 @@ def hello_world():
                     score = score - 10;
         except:
             pass
-        if __name__ == '__main__':
-            p = multiprocessing.Process(target=rate, args=(newname, reqid, rqe))
-            p.start()
+        finally:
+            subprocess.call(sys.executable.replace("pythonw", "python") + " " + os.path.realpath('rateworker.py') + " " + newname.replace(" ", "-") + " " + str(reqid))
+            webbrowser.open(sys.executable.replace("pythonw", "python") + " " + os.path.realpath('rateworker.py') + " " + newname.replace(" ", "-") + " " + str(reqid))
+            #p = multiprocessing.Process(target=rate, args=(newname, reqid, rqe))
+
         return render_template('loadingscreen.html', songname=newname, songurl=prevurl, reqid=reqid)
     else:
         return render_template('search.html')
@@ -193,12 +206,22 @@ def hello_world():
 
 @app.route('/<uid>.txt')
 def getprogress(uid):
-    self.processqueue()
+    processqueue()
     try:
         return str(processes[uid])
     except:
         return "none"
 
+rqe = Queue.Queue()
+
+class QueueManager(BaseManager): pass
+QueueManager.register('get_queue', callable=lambda:rqe)
+key = open("auth.txt", "r")
+m = QueueManager(address=('localhost', 1234), authkey="hi")
+key.close()
+s = m.get_server()
+
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, threaded=True, processes=10)
+    app.run(debug=True, use_reloader=False, threaded=True)
+    s.serve_forever()
 
