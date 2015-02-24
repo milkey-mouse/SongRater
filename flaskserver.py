@@ -4,6 +4,7 @@ from multiprocessing.managers import BaseManager
 from HTMLParser import HTMLParser
 from flask import render_template
 from flask.ext.gzip import Gzip
+from celery import Celery
 from flask import request
 import simplejson as json
 from flask import Flask
