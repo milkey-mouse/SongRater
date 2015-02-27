@@ -1,29 +1,26 @@
 # -*- coding: cp1252 -*-
-from multiprocessing.managers import BaseManager
+#Copyright Milkey Mouse 2015
 from HTMLParser import HTMLParser
 import simplejson as json
-import multiprocessing
-import webbrowser
+import celery
+from celery import Celery
+from flask import render_template
+from flask.ext.gzip import Gzip
+from celery import task
+from flask import Flask
 import datetime
 import urllib2
 import string
-import Queue
-import uuid
 import math
 import sys
 import os
 
-def rate(name, uid):
-    webbrowser.open("ducksarethebest.com")
-    #try:
-    class QueueManager(BaseManager): pass
-    QueueManager.register('get_queue')
-    m = QueueManager(address=('localhost', 1234), authkey="hi")
-    m.connect()
-    rq = m.get_queue()
-    rq.put_nowait((uid, 0))
+celery = Celery("flasktasks")
+
+@celery.task(bind=True)
+def rate(self, name):
     address = "http://www.songlyrics.com/index.php?section=search&searchW="
-    address = address + name.replace("-", " ")
+    address = address + name
     response = urllib2.urlopen(address)
     html = response.read()
     done = False
@@ -56,7 +53,6 @@ def rate(name, uid):
             except:
                 pass
             wd += 1
-            rq.put_nowait((uid, math.floor((wc / wd) * 100)))
             if(word != word.strip()):
                 continue
             if(word == ""):
@@ -108,7 +104,6 @@ def rate(name, uid):
                 isword = False
                 try:
                     response2 = urllib2.urlopen("http://dictionary.reference.com/browse/" + word).read()
-                    webbrowser.open("http://dictionary.reference.com/browse/" + word)
                     if not '<div class="game-scrabble">' in response2:
                         isword = False
                     else:
@@ -134,14 +129,11 @@ def rate(name, uid):
                 text = open("./cache/word/" + word + ".txt", 'w')
                 text.write(str(score - lastscore))
                 text.close()
+                self.update_state(state='PROGRESS', meta=str(wd / words.count * 100) + "%")
+                score += 100
                 #print "CACHED: " + word
         except:
             pass
     score = score / (len(html) - 1)
     score = score * 750
-    rq.put_nowait((uid, "s" + str(score)))
-    #except:
-    #    pass
-    return "s" + str(score)
-
-rate(sys.argv[1], sys.argv[2])
+    return score
